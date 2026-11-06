@@ -1,8 +1,10 @@
 const express = require('express');
+const path = require('path'); // <-- 1. Importa path
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views')); // <-- 2. Usa esto para que Vercel encuentre la carpeta views
 
 // Simulación de base de datos en memoria (ideal para despliegue rápido en Vercel)
 let plataformas = [
