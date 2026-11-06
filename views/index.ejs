@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogación de Series 7A</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light py-4">
+    <div class="container">
+        <h1 class="text-center mb-4">Catálogo de Series y Valoraciones</h1>
+
+        <div class="row">
+            <!-- Plataformas -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">Plataformas</div>
+                    <div class="card-body">
+                        <form action="/plataformas/crear" method="POST" class="mb-3">
+                            <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre plataforma" required>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">Agregar Plataforma</button>
+                        </form>
+                        <ul class="list-group">
+                            <% plataformas.forEach(p => { %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <%= p.nombre %>
+                                    <form action="/plataformas/eliminar/<%= p.id %>" method="POST" style="margin:0;">
+                                        <button class="btn btn-danger btn-sm">X</button>
+                                    </form>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Series -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">Series</div>
+                    <div class="card-body">
+                        <form action="/series/crear" method="POST" class="mb-3">
+                            <input type="text" class="form-control mb-2" name="nombre" placeholder="Nombre de la serie" required>
+                            <select class="form-select mb-2" name="plataformaId" required>
+                                <option value="">Seleccione Plataforma</option>
+                                <% plataformas.forEach(p => { %>
+                                    <option value="<%= p.id %>"><%= p.nombre %></option>
+                                <% }) %>
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm w-100">Agregar Serie</button>
+                        </form>
+                        <ul class="list-group">
+                            <% series.forEach(s => { %>
+                                <% const plat = plataformas.find(p => p.id === s.plataformaId); %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div><strong><%= s.nombre %></strong> <br><small class="text-muted"><%= plat ? plat.nombre : 'Sin plataforma' %></small></div>
+                                    <form action="/series/eliminar/<%= s.id %>" method="POST" style="margin:0;">
+                                        <button class="btn btn-danger btn-sm">X</button>
+                                    </form>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Valoraciones -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white">Valoraciones</div>
+                    <div class="card-body">
+                        <form action="/valoraciones/crear" method="POST" class="mb-3">
+                            <select class="form-select mb-2" name="plataformaId" required>
+                                <option value="">Plataforma</option>
+                                <% plataformas.forEach(p => { %>
+                                    <option value="<%= p.id %>"><%= p.nombre %></option>
+                                <% }) %>
+                            </select>
+                            <select class="form-select mb-2" name="serieId" required>
+                                <option value="">Serie</option>
+                                <% series.forEach(s => { %>
+                                    <option value="<%= s.id %>"><%= s.nombre %></option>
+                                <% }) %>
+                            </select>
+                            <input type="number" class="form-control mb-2" name="puntaje" min="1" max="10" placeholder="Puntaje (1-10)" required>
+                            <textarea class="form-control mb-2" name="observacion" placeholder="Observación..." required></textarea>
+                            <button type="submit" class="btn btn-dark btn-sm w-100">Guardar Valoración</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Valoraciones Registradas -->
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-secondary text-white">Listado de Valoraciones</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Plataforma</th>
+                            <th>Serie</th>
+                            <th>Puntaje</th>
+                            <th>Observación</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% valoraciones.forEach(v => { %>
+                            <% const plat = plataformas.find(p => p.id === v.plataformaId); %>
+                            <% const ser = series.find(s => s.id === v.serieId); %>
+                            <tr>
+                                <td><%= plat ? plat.nombre : 'N/A' %></td>
+                                <td><%= ser ? ser.nombre : 'N/A' %></td>
+                                <td><span class="badge bg-primary"><%= v.puntaje %>/10</span></td>
+                                <td><%= v.observacion %></td>
+                                <td>
+                                    <form action="/valoraciones/eliminar/<%= v.id %>" method="POST" style="margin:0;">
+                                        <button class="btn btn-danger btn-sm">X</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

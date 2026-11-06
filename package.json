@@ -1,0 +1,13 @@
+{
+  "name": "series-catalogacion-7a",
+  "version": "1.0.0",
+  "description": "Sistema de catalogación de series y valoraciones",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2"
+  }
+}
